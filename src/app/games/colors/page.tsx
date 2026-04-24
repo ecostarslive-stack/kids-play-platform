@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useGameState } from "@/hooks/useGameState";
 import { useGameSound } from "@/hooks/useGameSound";
-import { useVoice } from "@/hooks/useVoice";
+import { useBilingualSpeak } from "@/hooks/useBilingualSpeak";
 import { BigButton } from "@/components/ui/BigButton";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ScoreDisplay } from "@/components/ui/ScoreDisplay";
@@ -21,7 +21,7 @@ export default function ColorsPage() {
   const router = useRouter();
   const { state, start, correct, wrong, next, complete, reset } = useGameState(TOTAL_ROUNDS);
   const { playCorrect, playWrong, playCheer } = useGameSound();
-  const { speakHebrew } = useVoice({ hebrewRate: 0.75 });
+  const { speakBilingual, cancelSpeak } = useBilingualSpeak();
 
   const [showCorrect, setShowCorrect] = useState(false);
   const [showWrong, setShowWrong] = useState(false);
@@ -38,10 +38,10 @@ export default function ColorsPage() {
         .map((c) => c.hebrew);
       const distractors = pickRandom(otherNames, 3);
       setOptions(shuffleArray([currentColor.hebrew, ...distractors]));
-      const timer = setTimeout(() => speakHebrew(currentColor.hebrew), 500);
-      return () => clearTimeout(timer);
+      const timer = setTimeout(() => speakBilingual(currentColor.hebrew, currentColor.english), 500);
+      return () => { clearTimeout(timer); cancelSpeak(); };
     }
-  }, [state.currentIndex, state.phase, currentColor, speakHebrew]);
+  }, [state.currentIndex, state.phase, currentColor, speakBilingual, cancelSpeak]);
 
   const handleAnswer = useCallback(
     (answer: string) => {

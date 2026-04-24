@@ -4,16 +4,17 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useGameSound } from "@/hooks/useGameSound";
+import { useBilingualSpeak } from "@/hooks/useBilingualSpeak";
 import { BigButton } from "@/components/ui/BigButton";
 import { ScoreDisplay } from "@/components/ui/ScoreDisplay";
 import { CompletionCelebration } from "@/components/feedback/CompletionCelebration";
 import { DifficultySelector, Difficulty } from "@/components/ui/DifficultySelector";
 
 const simonColors = [
-  { id: "red", color: "#FF6B6B", activeColor: "#FF4040", hebrew: "אדום", freq: 261.63 },
-  { id: "blue", color: "#339AF0", activeColor: "#1C7ED6", hebrew: "כחול", freq: 329.63 },
-  { id: "green", color: "#51CF66", activeColor: "#37B24D", hebrew: "ירוק", freq: 392.0 },
-  { id: "yellow", color: "#FFC75F", activeColor: "#FFB020", hebrew: "צהוב", freq: 523.25 },
+  { id: "red", color: "#FF6B6B", activeColor: "#FF4040", hebrew: "אדום", english: "Red", freq: 261.63 },
+  { id: "blue", color: "#339AF0", activeColor: "#1C7ED6", hebrew: "כחול", english: "Blue", freq: 329.63 },
+  { id: "green", color: "#51CF66", activeColor: "#37B24D", hebrew: "ירוק", english: "Green", freq: 392.0 },
+  { id: "yellow", color: "#FFC75F", activeColor: "#FFB020", hebrew: "צהוב", english: "Yellow", freq: 523.25 },
 ];
 
 const freqById: Record<string, number> = Object.fromEntries(
@@ -31,6 +32,7 @@ type Phase = "intro" | "difficulty" | "showing" | "input" | "complete" | "gameov
 export default function SimonPage() {
   const router = useRouter();
   const { playCorrect, playWrong, playCheer, playNote } = useGameSound();
+  const { speakBilingual } = useBilingualSpeak();
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [difficulty, setDifficulty] = useState<Difficulty>("easy");
@@ -106,6 +108,9 @@ export default function SimonPage() {
       if (nextIndex >= sequence.length) {
         setScore(s => s + 1);
         playCorrect();
+        // Announce the last color pressed in both languages
+        const pressedColor = simonColors.find(c => c.id === colorId);
+        if (pressedColor) speakBilingual(pressedColor.hebrew, pressedColor.english);
 
         if (round >= config.maxRounds) {
           playCheer();
@@ -120,7 +125,7 @@ export default function SimonPage() {
       playWrong();
       setPhase("gameover");
     }
-  }, [phase, sequence, playerIndex, round, config.maxRounds, playCorrect, playWrong, playCheer, playNote, startNewRound]);
+  }, [phase, sequence, playerIndex, round, config.maxRounds, playCorrect, playWrong, playCheer, playNote, startNewRound, speakBilingual]);
 
   useEffect(() => {
     return () => clearTimeouts();

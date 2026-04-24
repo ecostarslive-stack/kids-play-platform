@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useGameSound } from "@/hooks/useGameSound";
+import { useBilingualSpeak } from "@/hooks/useBilingualSpeak";
 import { BigButton } from "@/components/ui/BigButton";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ScoreDisplay } from "@/components/ui/ScoreDisplay";
@@ -36,6 +37,7 @@ type Phase = "intro" | "difficulty" | "playing" | "complete";
 export default function BalloonPopPage() {
   const router = useRouter();
   const { playCorrect, playWrong, playCheer, playPop } = useGameSound();
+  const { speakBilingual } = useBilingualSpeak();
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [difficulty, setDifficulty] = useState<Difficulty>("easy");
@@ -43,6 +45,7 @@ export default function BalloonPopPage() {
   const [round, setRound] = useState(0);
   const [balloons, setBalloons] = useState<Balloon[]>([]);
   const [targetLetter, setTargetLetter] = useState("");
+  const [targetLetterObj, setTargetLetterObj] = useState<{ hebrew: string; english: string } | null>(null);
   const [showCorrect, setShowCorrect] = useState(false);
   const [showWrong, setShowWrong] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
@@ -65,6 +68,7 @@ export default function BalloonPopPage() {
     }));
 
     setTargetLetter(target.hebrew);
+    setTargetLetterObj({ hebrew: target.name, english: target.english });
     setBalloons(newBalloons);
   }, [config.balloons]);
 
@@ -73,6 +77,14 @@ export default function BalloonPopPage() {
       generateRound();
     }
   }, [phase, round, generateRound]);
+
+  // Speak the target letter name when it appears
+  useEffect(() => {
+    if (phase === "playing" && targetLetterObj) {
+      const t = setTimeout(() => speakBilingual(targetLetterObj.hebrew, targetLetterObj.english), 700);
+      return () => clearTimeout(t);
+    }
+  }, [targetLetterObj, phase, speakBilingual]);
 
   const handlePop = useCallback((balloon: Balloon) => {
     if (isLocked || balloon.popped) return;
@@ -85,6 +97,7 @@ export default function BalloonPopPage() {
       playCorrect();
       setScore(s => s + 1);
       setShowCorrect(true);
+      if (targetLetterObj) speakBilingual(targetLetterObj.hebrew, targetLetterObj.english);
       setTimeout(() => {
         setShowCorrect(false);
         if (round + 1 >= config.rounds) {
@@ -103,7 +116,7 @@ export default function BalloonPopPage() {
         setIsLocked(false);
       }, 600);
     }
-  }, [isLocked, round, config.rounds, playCorrect, playWrong, playCheer, playPop]);
+  }, [isLocked, round, config.rounds, playCorrect, playWrong, playCheer, playPop, targetLetterObj, speakBilingual]);
 
   const startGame = useCallback((diff: Difficulty) => {
     setDifficulty(diff);

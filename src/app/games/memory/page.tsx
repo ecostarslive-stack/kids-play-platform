@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useGameSound } from "@/hooks/useGameSound";
+import { useBilingualSpeak } from "@/hooks/useBilingualSpeak";
 import { BigButton } from "@/components/ui/BigButton";
 import { ScoreDisplay } from "@/components/ui/ScoreDisplay";
 import { CompletionCelebration } from "@/components/feedback/CompletionCelebration";
@@ -17,6 +18,7 @@ interface Card {
   pairId: string;
   emoji: string;
   hebrew: string;
+  english: string;
   isFlipped: boolean;
   isMatched: boolean;
 }
@@ -26,8 +28,8 @@ function createCards(): Card[] {
   const pairs: Card[] = [];
   selected.forEach((item) => {
     pairs.push(
-      { id: `${item.id}-a`, pairId: item.id, emoji: item.emoji, hebrew: item.hebrew, isFlipped: false, isMatched: false },
-      { id: `${item.id}-b`, pairId: item.id, emoji: item.emoji, hebrew: item.hebrew, isFlipped: false, isMatched: false }
+      { id: `${item.id}-a`, pairId: item.id, emoji: item.emoji, hebrew: item.hebrew, english: item.english, isFlipped: false, isMatched: false },
+      { id: `${item.id}-b`, pairId: item.id, emoji: item.emoji, hebrew: item.hebrew, english: item.english, isFlipped: false, isMatched: false }
     );
   });
   return shuffleArray(pairs);
@@ -38,6 +40,7 @@ type Phase = "intro" | "playing" | "complete";
 export default function MemoryPage() {
   const router = useRouter();
   const { playCorrect, playWrong, playCheer, playFlip } = useGameSound();
+  const { speakBilingual } = useBilingualSpeak();
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [cards, setCards] = useState<Card[]>([]);
@@ -78,6 +81,7 @@ export default function MemoryPage() {
 
         if (first.pairId === second.pairId) {
           playCorrect();
+          speakBilingual(first.hebrew, first.english);
           setScore((s) => s + 1);
           const newMatched = matchedCount + 1;
           setMatchedCount(newMatched);
@@ -111,7 +115,7 @@ export default function MemoryPage() {
         }
       }
     },
-    [cards, flippedIds, isLocked, matchedCount, totalPairs, playCorrect, playWrong, playCheer, playFlip]
+    [cards, flippedIds, isLocked, matchedCount, totalPairs, playCorrect, playWrong, playCheer, playFlip, speakBilingual]
   );
 
   if (phase === "intro") {
@@ -168,9 +172,10 @@ export default function MemoryPage() {
               isMatched={card.isMatched}
               onClick={() => handleCardClick(card.id)}
               front={
-                <div className="flex flex-col items-center gap-1">
+                <div className="flex flex-col items-center gap-0.5">
                   <span className="text-3xl">{card.emoji}</span>
                   <span className="text-xs font-bold">{card.hebrew}</span>
+                  <span className="text-[10px] text-foreground/50">{card.english}</span>
                 </div>
               }
               back={<span className="text-3xl text-white">❓</span>}
