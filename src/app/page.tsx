@@ -40,6 +40,8 @@ export default function HomePage() {
 
   const newGames: GameEntry[] = [
     { slug: "tap-animal",    title: t.games.tapAnimal.title,    subtitle: t.games.tapAnimal.subtitle,    emoji: "🐱", color: "bg-gradient-to-br from-green-400 to-emerald-500" },
+    { slug: "word-match",    title: t.games.wordMatch.title,    subtitle: t.games.wordMatch.subtitle,    emoji: "🃏", color: "bg-gradient-to-br from-violet-500 to-purple-600" },
+    { slug: "abc-rocket",    title: t.games.abcRocket.title,    subtitle: t.games.abcRocket.subtitle,    emoji: "🚀", color: "bg-gradient-to-br from-indigo-500 to-purple-600" },
     { slug: "count-bubbles", title: t.games.countBubbles.title, subtitle: t.games.countBubbles.subtitle, emoji: "🫧", color: "bg-gradient-to-br from-blue-400 to-cyan-500" },
     { slug: "color-splash",  title: t.games.colorSplash.title,  subtitle: t.games.colorSplash.subtitle,  emoji: "🎨", color: "bg-gradient-to-br from-pink-400 to-rose-500" },
   ];
@@ -124,6 +126,25 @@ export default function HomePage() {
           />
         </Link>
       </section>
+
+      {/* Daily Challenge CTA */}
+      <Link href="/daily-challenge" className="w-full max-w-3xl">
+        <motion.div
+          whileTap={{ scale: 0.97 }}
+          className="w-full rounded-3xl p-4 flex items-center justify-between shadow-lg"
+          style={{ background: "linear-gradient(135deg, #6366f1, #a855f7, #ec4899)" }}
+        >
+          <div>
+            <p className="text-white font-black text-xl">{t.home.dailyChallenge}</p>
+            <p className="text-white/70 text-sm">{isHebrew ? "משחק חדש כל יום!" : "New game every day!"}</p>
+          </div>
+          <motion.span
+            className="text-5xl"
+            animate={{ rotate: [0, -15, 15, 0], scale: [1, 1.15, 1] }}
+            transition={{ repeat: Infinity, duration: 3 }}
+          >🎯</motion.span>
+        </motion.div>
+      </Link>
 
       {/* NEW games — featured prominently */}
       <Section title={t.home.newGames}>

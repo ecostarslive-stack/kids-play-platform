@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { CompletionCelebration } from "@/components/feedback/CompletionCelebration";
 import { useGameSound } from "@/hooks/useGameSound";
+import { useBilingualSpeak } from "@/hooks/useBilingualSpeak";
 import { BackButton } from "@/components/ui/BackButton";
 
 const BUBBLE_COLORS = [
@@ -64,6 +65,7 @@ type Phase = "intro" | "playing" | "complete";
 export default function CountBubblesPage() {
   const router = useRouter();
   const { playCorrect, playWrong, playCheer } = useGameSound();
+  const { speakBilingual } = useBilingualSpeak();
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [round, setRound] = useState(0);
@@ -98,6 +100,10 @@ export default function CountBubblesPage() {
       setFeedback({ type: "correct", chosen: n });
       setShowCount(true);
       setScore(s => s + 1);
+      // Speak the number in both languages
+      const heNum = ["אפס","אחד","שניים","שלושה","ארבעה","חמישה","שישה","שבעה","שמונה","תשעה","עשרה"][Math.min(currentRound.count, 10)];
+      const enNum = ["zero","one","two","three","four","five","six","seven","eight","nine","ten"][Math.min(currentRound.count, 10)];
+      track(() => speakBilingual(heNum, enNum), 200);
       track(() => {
         if (round + 1 >= TOTAL_ROUNDS) {
           playCheer();

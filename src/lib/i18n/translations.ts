@@ -42,6 +42,7 @@ export interface Translations {
     learnEnglish: string;
     learnEnglishSub: string;
     myAchievements: string;
+    dailyChallenge: string;
   };
   games: {
     alefBet: { title: string; subtitle: string; findLetter: string };
@@ -61,6 +62,8 @@ export interface Translations {
     tapAnimal: { title: string; subtitle: string };
     countBubbles: { title: string; subtitle: string };
     colorSplash: { title: string; subtitle: string };
+    wordMatch: { title: string; subtitle: string };
+    abcRocket: { title: string; subtitle: string };
   };
   learn: {
     title: string;
@@ -132,6 +135,7 @@ export const translations: Record<Language, Translations> = {
       learnEnglish: "🎓 ללמוד אנגלית",
       learnEnglishSub: "8 שיעורים · אנגלית ← עברית · עם קול!",
       myAchievements: "🏅 ההישגים שלי",
+      dailyChallenge: "🎯 אתגר יומי",
     },
     games: {
       alefBet: { title: "אותיות", subtitle: "לומדים את הא-ב", findLetter: "?איפה האות הזו" },
@@ -151,6 +155,8 @@ export const translations: Record<Language, Translations> = {
       tapAnimal: { title: "חיות", subtitle: "הקשיבו ולחצו על הבעל חיים" },
       countBubbles: { title: "ספרו בועות", subtitle: "ספרו ובחרו את המספר הנכון" },
       colorSplash: { title: "צבעים", subtitle: "בחרו את הצבע הנכון של הצורה" },
+      wordMatch: { title: "התאמת מילים", subtitle: "חברו מילה לתמונה" },
+      abcRocket: { title: "ABC רקטה", subtitle: "לחצו על האות הנכונה" },
     },
     learn: {
       title: "🎓 ללמוד עברית",
@@ -220,6 +226,7 @@ export const translations: Record<Language, Translations> = {
       learnEnglish: "🎓 Learn English",
       learnEnglishSub: "8 lessons · Hebrew → English · With voice!",
       myAchievements: "🏅 My Achievements",
+      dailyChallenge: "🎯 Daily Challenge",
     },
     games: {
       alefBet: { title: "Letters", subtitle: "Learn the Alef-Bet", findLetter: "Find this letter!" },
@@ -239,6 +246,8 @@ export const translations: Record<Language, Translations> = {
       tapAnimal: { title: "Animals", subtitle: "Listen and tap the right animal" },
       countBubbles: { title: "Count Bubbles", subtitle: "Count and pick the right number" },
       colorSplash: { title: "Colors", subtitle: "Pick the right color for the shape" },
+      wordMatch: { title: "Word Match", subtitle: "Match word to picture" },
+      abcRocket: { title: "ABC Rocket", subtitle: "Tap the right letter" },
     },
     learn: {
       title: "🎓 Learn Hebrew",

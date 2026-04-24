@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { CompletionCelebration } from "@/components/feedback/CompletionCelebration";
 import { useGameSound } from "@/hooks/useGameSound";
+import { useBilingualSpeak } from "@/hooks/useBilingualSpeak";
 import { BackButton } from "@/components/ui/BackButton";
 
 const COLORS = [
@@ -78,6 +79,7 @@ type Phase = "intro" | "playing" | "complete";
 export default function ColorSplashPage() {
   const router = useRouter();
   const { playCorrect, playWrong, playCheer } = useGameSound();
+  const { speakBilingual } = useBilingualSpeak();
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [round, setRound] = useState(0);
@@ -112,6 +114,8 @@ export default function ColorSplashPage() {
       setFeedback("correct");
       setSplat(true);
       setScore(s => s + 1);
+      // Speak the color name in both languages
+      track(() => speakBilingual(currentRound.target.he, currentRound.target.en), 150);
       track(() => {
         if (round + 1 >= TOTAL_ROUNDS) {
           playCheer();
