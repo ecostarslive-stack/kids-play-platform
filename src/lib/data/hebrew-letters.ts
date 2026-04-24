@@ -1,0 +1,26 @@
+import type { HebrewLetter } from "@/lib/types";
+
+export const hebrewLetters: HebrewLetter[] = [
+  { id: "alef", hebrew: "א", english: "Alef", name: "אָלֶף", audio: "/audio/letters/alef.mp3" },
+  { id: "bet", hebrew: "ב", english: "Bet", name: "בֵּית", audio: "/audio/letters/bet.mp3" },
+  { id: "gimel", hebrew: "ג", english: "Gimel", name: "גִּימֶל", audio: "/audio/letters/gimel.mp3" },
+  { id: "dalet", hebrew: "ד", english: "Dalet", name: "דָּלֶת", audio: "/audio/letters/dalet.mp3" },
+  { id: "he", hebrew: "ה", english: "He", name: "הֵא", audio: "/audio/letters/he.mp3" },
+  { id: "vav", hebrew: "ו", english: "Vav", name: "וָו", audio: "/audio/letters/vav.mp3" },
+  { id: "zayin", hebrew: "ז", english: "Zayin", name: "זַיִן", audio: "/audio/letters/zayin.mp3" },
+  { id: "chet", hebrew: "ח", english: "Chet", name: "חֵית", audio: "/audio/letters/chet.mp3" },
+  { id: "tet", hebrew: "ט", english: "Tet", name: "טֵית", audio: "/audio/letters/tet.mp3" },
+  { id: "yod", hebrew: "י", english: "Yod", name: "יוֹד", audio: "/audio/letters/yod.mp3" },
+  { id: "kaf", hebrew: "כ", english: "Kaf", name: "כַּף", audio: "/audio/letters/kaf.mp3", finalForm: "ך" },
+  { id: "lamed", hebrew: "ל", english: "Lamed", name: "לָמֶד", audio: "/audio/letters/lamed.mp3" },
+  { id: "mem", hebrew: "מ", english: "Mem", name: "מֵם", audio: "/audio/letters/mem.mp3", finalForm: "ם" },
+  { id: "nun", hebrew: "נ", english: "Nun", name: "נוּן", audio: "/audio/letters/nun.mp3", finalForm: "ן" },
+  { id: "samekh", hebrew: "ס", english: "Samekh", name: "סָמֶך", audio: "/audio/letters/samekh.mp3" },
+  { id: "ayin", hebrew: "ע", english: "Ayin", name: "עַיִן", audio: "/audio/letters/ayin.mp3" },
+  { id: "pe", hebrew: "פ", english: "Pe", name: "פֵּא", audio: "/audio/letters/pe.mp3", finalForm: "ף" },
+  { id: "tsadi", hebrew: "צ", english: "Tsadi", name: "צָדִי", audio: "/audio/letters/tsadi.mp3", finalForm: "ץ" },
+  { id: "qof", hebrew: "ק", english: "Qof", name: "קוֹף", audio: "/audio/letters/qof.mp3" },
+  { id: "resh", hebrew: "ר", english: "Resh", name: "רֵישׁ", audio: "/audio/letters/resh.mp3" },
+  { id: "shin", hebrew: "ש", english: "Shin", name: "שִׁין", audio: "/audio/letters/shin.mp3" },
+  { id: "tav", hebrew: "ת", english: "Tav", name: "תָּו", audio: "/audio/letters/tav.mp3" },
+];
