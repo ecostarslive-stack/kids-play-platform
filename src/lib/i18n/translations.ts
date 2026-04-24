@@ -64,6 +64,7 @@ export interface Translations {
     colorSplash: { title: string; subtitle: string };
     wordMatch: { title: string; subtitle: string };
     abcRocket: { title: string; subtitle: string };
+    ponyCare: { title: string; subtitle: string };
   };
   learn: {
     title: string;
@@ -157,6 +158,7 @@ export const translations: Record<Language, Translations> = {
       colorSplash: { title: "צבעים", subtitle: "בחרו את הצבע הנכון של הצורה" },
       wordMatch: { title: "התאמת מילים", subtitle: "חברו מילה לתמונה" },
       abcRocket: { title: "ABC רקטה", subtitle: "לחצו על האות הנכונה" },
+      ponyCare: { title: "טיפול בפוני 🦄", subtitle: "רחצו, סרקו והאכילו את הפוני" },
     },
     learn: {
       title: "🎓 ללמוד עברית",
@@ -248,6 +250,7 @@ export const translations: Record<Language, Translations> = {
       colorSplash: { title: "Colors", subtitle: "Pick the right color for the shape" },
       wordMatch: { title: "Word Match", subtitle: "Match word to picture" },
       abcRocket: { title: "ABC Rocket", subtitle: "Tap the right letter" },
+      ponyCare: { title: "Pony Care 🦄", subtitle: "Wash, brush and feed your pony" },
     },
     learn: {
       title: "🎓 Learn Hebrew",
