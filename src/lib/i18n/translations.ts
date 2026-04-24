@@ -36,10 +36,12 @@ export interface Translations {
     adventures: string;
     learningGames: string;
     funGames: string;
+    newGames: string;
     learnHebrew: string;
     learnHebrewSub: string;
     learnEnglish: string;
     learnEnglishSub: string;
+    myAchievements: string;
   };
   games: {
     alefBet: { title: string; subtitle: string; findLetter: string };
@@ -56,6 +58,9 @@ export interface Translations {
     noaGarden: { title: string; subtitle: string };
     dailyWord: { title: string; subtitle: string };
     conversation: { title: string; subtitle: string };
+    tapAnimal: { title: string; subtitle: string };
+    countBubbles: { title: string; subtitle: string };
+    colorSplash: { title: string; subtitle: string };
   };
   learn: {
     title: string;
@@ -121,10 +126,12 @@ export const translations: Record<Language, Translations> = {
       adventures: "🌟 הרפתקאות",
       learningGames: "📚 משחקי למידה",
       funGames: "🎯 משחקי כיף",
+      newGames: "🆕 משחקים חדשים",
       learnHebrew: "🎓 ללמוד עברית",
       learnHebrewSub: "10 שיעורים · עברית ← אנגלית · עם קול!",
       learnEnglish: "🎓 ללמוד אנגלית",
       learnEnglishSub: "8 שיעורים · אנגלית ← עברית · עם קול!",
+      myAchievements: "🏅 ההישגים שלי",
     },
     games: {
       alefBet: { title: "אותיות", subtitle: "לומדים את הא-ב", findLetter: "?איפה האות הזו" },
@@ -141,6 +148,9 @@ export const translations: Record<Language, Translations> = {
       noaGarden: { title: "הגן של נועה", subtitle: "גן קסום שמחכה לך" },
       dailyWord: { title: "מילה יומית", subtitle: "לומדים מילה חדשה כל יום" },
       conversation: { title: "שיחון", subtitle: "תרגול שיחות בעברית" },
+      tapAnimal: { title: "חיות", subtitle: "הקשיבו ולחצו על הבעל חיים" },
+      countBubbles: { title: "ספרו בועות", subtitle: "ספרו ובחרו את המספר הנכון" },
+      colorSplash: { title: "צבעים", subtitle: "בחרו את הצבע הנכון של הצורה" },
     },
     learn: {
       title: "🎓 ללמוד עברית",
@@ -204,10 +214,12 @@ export const translations: Record<Language, Translations> = {
       adventures: "🌟 Adventures",
       learningGames: "📚 Learning Games",
       funGames: "🎯 Fun Games",
+      newGames: "🆕 New Games",
       learnHebrew: "🎓 Learn Hebrew",
       learnHebrewSub: "10 lessons · English → Hebrew · With voice!",
       learnEnglish: "🎓 Learn English",
       learnEnglishSub: "8 lessons · Hebrew → English · With voice!",
+      myAchievements: "🏅 My Achievements",
     },
     games: {
       alefBet: { title: "Letters", subtitle: "Learn the Alef-Bet", findLetter: "Find this letter!" },
@@ -224,6 +236,9 @@ export const translations: Record<Language, Translations> = {
       noaGarden: { title: "Noa's Garden", subtitle: "A magical garden awaits" },
       dailyWord: { title: "Daily Word", subtitle: "Learn a new word every day" },
       conversation: { title: "Conversation", subtitle: "Practice Hebrew dialogues" },
+      tapAnimal: { title: "Animals", subtitle: "Listen and tap the right animal" },
+      countBubbles: { title: "Count Bubbles", subtitle: "Count and pick the right number" },
+      colorSplash: { title: "Colors", subtitle: "Pick the right color for the shape" },
     },
     learn: {
       title: "🎓 Learn Hebrew",

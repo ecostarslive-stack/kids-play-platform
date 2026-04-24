@@ -38,6 +38,12 @@ export default function HomePage() {
     { slug: "simon",       title: t.games.simon.title,      subtitle: t.games.simon.subtitle,      emoji: "🔔", color: "bg-game-orange" },
   ];
 
+  const newGames: GameEntry[] = [
+    { slug: "tap-animal",    title: t.games.tapAnimal.title,    subtitle: t.games.tapAnimal.subtitle,    emoji: "🐱", color: "bg-gradient-to-br from-green-400 to-emerald-500" },
+    { slug: "count-bubbles", title: t.games.countBubbles.title, subtitle: t.games.countBubbles.subtitle, emoji: "🫧", color: "bg-gradient-to-br from-blue-400 to-cyan-500" },
+    { slug: "color-splash",  title: t.games.colorSplash.title,  subtitle: t.games.colorSplash.subtitle,  emoji: "🎨", color: "bg-gradient-to-br from-pink-400 to-rose-500" },
+  ];
+
   const storyGames: GameEntry[] = [
     { slug: "ari-adventure", title: t.games.ariAdventure.title, subtitle: t.games.ariAdventure.subtitle, emoji: "🦁", color: "bg-gradient-to-br from-amber-400 to-orange-500" },
     { slug: "noa-garden",    title: t.games.noaGarden.title,    subtitle: t.games.noaGarden.subtitle,    emoji: "🌸", color: "bg-gradient-to-br from-pink-400 to-rose-500" },
@@ -119,6 +125,15 @@ export default function HomePage() {
         </Link>
       </section>
 
+      {/* NEW games — featured prominently */}
+      <Section title={t.home.newGames}>
+        <div className="grid grid-cols-3 gap-3">
+          {newGames.map((g) => (
+            <GameLink key={g.slug} game={g} small />
+          ))}
+        </div>
+      </Section>
+
       {/* Story Adventures */}
       <Section title={t.home.adventures}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -145,6 +160,16 @@ export default function HomePage() {
           ))}
         </div>
       </Section>
+
+      {/* Achievements link */}
+      <Link href="/achievements" className="w-full max-w-3xl">
+        <motion.div
+          whileTap={{ scale: 0.97 }}
+          className="w-full bg-gradient-to-r from-yellow-400 to-orange-400 text-white font-black text-lg py-4 rounded-2xl text-center shadow-md"
+        >
+          {t.home.myAchievements}
+        </motion.div>
+      </Link>
 
       {/* Daily streak nudge */}
       <DailyNudge isHebrew={isHebrew} />
