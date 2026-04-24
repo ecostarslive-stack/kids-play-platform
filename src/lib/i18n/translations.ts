@@ -65,6 +65,9 @@ export interface Translations {
     wordMatch: { title: string; subtitle: string };
     abcRocket: { title: string; subtitle: string };
     ponyCare: { title: string; subtitle: string };
+    magicKitchen: { title: string; subtitle: string };
+    magicGarden: { title: string; subtitle: string };
+    dressUp: { title: string; subtitle: string };
   };
   learn: {
     title: string;
@@ -159,6 +162,9 @@ export const translations: Record<Language, Translations> = {
       wordMatch: { title: "התאמת מילים", subtitle: "חברו מילה לתמונה" },
       abcRocket: { title: "ABC רקטה", subtitle: "לחצו על האות הנכונה" },
       ponyCare: { title: "טיפול בפוני 🦄", subtitle: "רחצו, סרקו והאכילו את הפוני" },
+      magicKitchen: { title: "מטבח קסם 🍳", subtitle: "בשלו מנות טעימות" },
+      magicGarden: { title: "גינה קסומה 🌻", subtitle: "שתלו, השקו וגדלו פרחים" },
+      dressUp: { title: "להתלבש 👗", subtitle: "הלבישו את הדמות" },
     },
     learn: {
       title: "🎓 ללמוד עברית",
@@ -251,6 +257,9 @@ export const translations: Record<Language, Translations> = {
       wordMatch: { title: "Word Match", subtitle: "Match word to picture" },
       abcRocket: { title: "ABC Rocket", subtitle: "Tap the right letter" },
       ponyCare: { title: "Pony Care 🦄", subtitle: "Wash, brush and feed your pony" },
+      magicKitchen: { title: "Magic Kitchen 🍳", subtitle: "Cook yummy dishes" },
+      magicGarden: { title: "Magic Garden 🌻", subtitle: "Plant, water and grow flowers" },
+      dressUp: { title: "Dress Up 👗", subtitle: "Dress the character" },
     },
     learn: {
       title: "🎓 Learn Hebrew",

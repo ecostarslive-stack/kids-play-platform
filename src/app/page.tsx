@@ -44,7 +44,10 @@ export default function HomePage() {
     { slug: "abc-rocket",    title: t.games.abcRocket.title,    subtitle: t.games.abcRocket.subtitle,    emoji: "🚀", color: "bg-gradient-to-br from-indigo-500 to-purple-600" },
     { slug: "count-bubbles", title: t.games.countBubbles.title, subtitle: t.games.countBubbles.subtitle, emoji: "🫧", color: "bg-gradient-to-br from-blue-400 to-cyan-500" },
     { slug: "color-splash",  title: t.games.colorSplash.title,  subtitle: t.games.colorSplash.subtitle,  emoji: "🎨", color: "bg-gradient-to-br from-orange-400 to-amber-500" },
-    { slug: "pony-care",     title: t.games.ponyCare.title,     subtitle: t.games.ponyCare.subtitle,     emoji: "🦄", color: "bg-gradient-to-br from-pink-400 to-rose-500" },
+    { slug: "pony-care",      title: t.games.ponyCare.title,      subtitle: t.games.ponyCare.subtitle,      emoji: "🦄", color: "bg-gradient-to-br from-pink-400 to-rose-500" },
+    { slug: "magic-kitchen", title: t.games.magicKitchen.title, subtitle: t.games.magicKitchen.subtitle, emoji: "🍳", color: "bg-gradient-to-br from-orange-400 to-amber-500" },
+    { slug: "magic-garden",  title: t.games.magicGarden.title,  subtitle: t.games.magicGarden.subtitle,  emoji: "🌻", color: "bg-gradient-to-br from-green-400 to-emerald-500" },
+    { slug: "dress-up",      title: t.games.dressUp.title,      subtitle: t.games.dressUp.subtitle,      emoji: "👗", color: "bg-gradient-to-br from-pink-500 to-purple-500" },
   ];
 
   const storyGames: GameEntry[] = [
