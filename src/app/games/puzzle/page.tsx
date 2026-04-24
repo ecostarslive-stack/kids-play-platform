@@ -138,7 +138,7 @@ export default function PuzzlePage() {
       </div>
 
       {/* Puzzle grid */}
-      <div className="grid grid-cols-3 gap-3 w-full max-w-[300px]">
+      <div className="grid grid-cols-3 gap-3 w-full max-w-[320px]">
         {pieces.map((piece, index) => {
           const isCorrect = piece === selectedPuzzle.pieces[index];
           const isSelected = selectedIndex === index;

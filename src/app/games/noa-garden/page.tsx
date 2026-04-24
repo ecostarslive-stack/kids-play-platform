@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useGameSound } from "@/hooks/useGameSound";
@@ -212,6 +212,20 @@ export default function NoaGardenPage() {
 
   const CHALLENGE_ROUNDS = 5;
   const flowerColors = ["#FF6F91", "#845EC2", "#51CF66", "#FFD93D"];
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const trackTimeout = useCallback((fn: () => void, delay: number) => {
+    const id = setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter(t => t !== id);
+      fn();
+    }, delay);
+    timeoutsRef.current.push(id);
+    return id;
+  }, []);
+
+  useEffect(() => {
+    return () => { timeoutsRef.current.forEach(clearTimeout); };
+  }, []);
 
   const startLevel = useCallback((level: LevelData) => {
     setActiveLevel(level);
@@ -251,15 +265,15 @@ export default function NoaGardenPage() {
       setMemoryInput([]);
       setMemoryPhase("showing");
       seq.forEach((colorIdx, i) => {
-        setTimeout(() => setMemoryActive(colorIdx), i * 700);
-        setTimeout(() => setMemoryActive(null), i * 700 + 500);
+        trackTimeout(() => setMemoryActive(colorIdx), i * 700);
+        trackTimeout(() => setMemoryActive(null), i * 700 + 500);
       });
-      setTimeout(() => {
+      trackTimeout(() => {
         setMemoryPhase("input");
         setMemoryActive(null);
       }, seq.length * 700 + 300);
     }
-  }, []);
+  }, [trackTimeout]);
 
   const advanceStory = useCallback(() => {
     if (!activeLevel) return;
@@ -267,10 +281,10 @@ export default function NoaGardenPage() {
     if (storyStep + 1 < storyLines.length) {
       setStoryStep(s => s + 1);
     } else if (phase === "story-intro") {
-      setPhase("challenge");
+      generateChallenge(activeLevel.challengeType, 0);
       setChallengeRound(0);
       setChallengeScore(0);
-      generateChallenge(activeLevel.challengeType, 0);
+      setPhase("challenge");
     } else {
       const newProgress: SaveData = {
         currentLevel: Math.max(progress.currentLevel, activeLevel.id + 1),
@@ -298,7 +312,7 @@ export default function NoaGardenPage() {
       playCorrect();
       setChallengeScore(s => s + 1);
       setShowFeedback("correct");
-      setTimeout(() => {
+      trackTimeout(() => {
         setShowFeedback(null);
         const nextRound = challengeRound + 1;
         if (nextRound >= CHALLENGE_ROUNDS) {
@@ -314,18 +328,18 @@ export default function NoaGardenPage() {
     } else {
       playWrong();
       setShowFeedback("wrong");
-      setTimeout(() => {
+      trackTimeout(() => {
         setShowFeedback(null);
         setIsLocked(false);
       }, 500);
     }
-  }, [isLocked, target, activeLevel, challengeRound, playCorrect, playWrong, playCheer, generateChallenge]);
+  }, [isLocked, target, activeLevel, challengeRound, playCorrect, playWrong, playCheer, generateChallenge, trackTimeout]);
 
   const handleMemoryInput = useCallback((colorIdx: number) => {
     if (memoryPhase !== "input" || isLocked) return;
 
     setMemoryActive(colorIdx);
-    setTimeout(() => setMemoryActive(null), 200);
+    trackTimeout(() => setMemoryActive(null), 200);
 
     const newInput = [...memoryInput, colorIdx];
     setMemoryInput(newInput);
@@ -335,7 +349,7 @@ export default function NoaGardenPage() {
         playCorrect();
         setChallengeScore(s => s + 1);
         setIsLocked(true);
-        setTimeout(() => {
+        trackTimeout(() => {
           const nextRound = challengeRound + 1;
           if (nextRound >= CHALLENGE_ROUNDS) {
             playCheer();
@@ -353,15 +367,15 @@ export default function NoaGardenPage() {
       setMemoryInput([]);
       setMemoryPhase("showing");
       memorySequence.forEach((ci, i) => {
-        setTimeout(() => setMemoryActive(ci), i * 700);
-        setTimeout(() => setMemoryActive(null), i * 700 + 500);
+        trackTimeout(() => setMemoryActive(ci), i * 700);
+        trackTimeout(() => setMemoryActive(null), i * 700 + 500);
       });
-      setTimeout(() => {
+      trackTimeout(() => {
         setMemoryPhase("input");
         setMemoryActive(null);
       }, memorySequence.length * 700 + 300);
     }
-  }, [memoryPhase, memoryInput, memorySequence, isLocked, challengeRound, playCorrect, playWrong, playCheer, generateChallenge]);
+  }, [memoryPhase, memoryInput, memorySequence, isLocked, challengeRound, playCorrect, playWrong, playCheer, generateChallenge, trackTimeout]);
 
   // === RENDER ===
 
@@ -516,7 +530,7 @@ export default function NoaGardenPage() {
             <p className="text-xl font-bold text-foreground/80">
               {memoryPhase === "showing" ? "👀 !תסתכלו על הפרחים" : "👆 !לחצו באותו סדר"}
             </p>
-            <div className="grid grid-cols-2 gap-4 w-full max-w-[240px]">
+            <div className="grid grid-cols-2 gap-4 w-full max-w-[min(300px,80vw)]">
               {flowerColors.map((color, idx) => (
                 <motion.button
                   key={idx}
@@ -557,7 +571,7 @@ export default function NoaGardenPage() {
                   transition={{ delay: i * 0.1, type: "spring" }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => handleAnswer(opt)}
-                  className="bg-white/90 rounded-2xl shadow-md p-5 text-2xl font-bold hover:shadow-lg transition-shadow"
+                  className="bg-white/90 rounded-2xl shadow-md p-4 min-h-[72px] text-2xl font-bold hover:shadow-lg transition-shadow flex items-center justify-center"
                 >
                   {opt}
                 </motion.button>

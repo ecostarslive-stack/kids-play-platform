@@ -241,35 +241,6 @@ export default function AriAdventurePage() {
     setChallengeRound(0);
   }, []);
 
-  const advanceStory = useCallback(() => {
-    if (!activeLevel) return;
-    const storyLines = phase === "story-intro" ? activeLevel.storyIntro : activeLevel.storyOutro;
-    if (storyStep + 1 < storyLines.length) {
-      setStoryStep(s => s + 1);
-    } else if (phase === "story-intro") {
-      setPhase("challenge");
-      setChallengeRound(0);
-      setChallengeScore(0);
-      generateChallenge(activeLevel.challengeType, 0);
-    } else {
-      // Finished outro — save progress
-      const newProgress: SaveData = {
-        currentLevel: Math.max(progress.currentLevel, activeLevel.id + 1),
-        stars: [...progress.stars, activeLevel.id],
-        friends: [...new Set([...progress.friends, activeLevel.friend.emoji])],
-        lastPlayed: new Date().toISOString(),
-      };
-      setProgress(newProgress);
-      saveProgress(newProgress);
-
-      if (activeLevel.id === 6) {
-        setPhase("victory");
-      } else {
-        setPhase("map");
-      }
-    }
-  }, [activeLevel, phase, storyStep, progress]);
-
   const generateChallenge = useCallback((type: string, round: number) => {
     if (type === "letters" || (type === "mixed" && round % 4 === 0)) {
       const letter = hebrewLetters[Math.floor(Math.random() * hebrewLetters.length)];
@@ -310,6 +281,35 @@ export default function AriAdventurePage() {
       }, seq.length * 700 + 300);
     }
   }, [trackTimeout]);
+
+  const advanceStory = useCallback(() => {
+    if (!activeLevel) return;
+    const storyLines = phase === "story-intro" ? activeLevel.storyIntro : activeLevel.storyOutro;
+    if (storyStep + 1 < storyLines.length) {
+      setStoryStep(s => s + 1);
+    } else if (phase === "story-intro") {
+      generateChallenge(activeLevel.challengeType, 0);
+      setChallengeRound(0);
+      setChallengeScore(0);
+      setPhase("challenge");
+    } else {
+      // Finished outro — save progress
+      const newProgress: SaveData = {
+        currentLevel: Math.max(progress.currentLevel, activeLevel.id + 1),
+        stars: [...progress.stars, activeLevel.id],
+        friends: [...new Set([...progress.friends, activeLevel.friend.emoji])],
+        lastPlayed: new Date().toISOString(),
+      };
+      setProgress(newProgress);
+      saveProgress(newProgress);
+
+      if (activeLevel.id === 6) {
+        setPhase("victory");
+      } else {
+        setPhase("map");
+      }
+    }
+  }, [activeLevel, phase, storyStep, progress, generateChallenge]);
 
   const handleAnswer = useCallback((answer: string) => {
     if (isLocked || !activeLevel) return;
@@ -513,7 +513,7 @@ export default function AriAdventurePage() {
             <p className="text-xl font-bold text-white/90">
               {memoryPhase === "showing" ? "👀 !תסתכלו על הרצף" : "👆 !חזרו על הרצף"}
             </p>
-            <div className="grid grid-cols-2 gap-4 w-full max-w-[240px]">
+            <div className="grid grid-cols-2 gap-4 w-full max-w-[min(300px,80vw)]">
               {memoryColors.map((color, idx) => (
                 <motion.button
                   key={idx}
@@ -552,7 +552,7 @@ export default function AriAdventurePage() {
                   transition={{ delay: i * 0.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => handleAnswer(opt)}
-                  className="bg-white rounded-2xl shadow-md p-5 text-2xl font-bold hover:shadow-lg transition-shadow"
+                  className="bg-white rounded-2xl shadow-md p-4 min-h-[72px] text-2xl font-bold hover:shadow-lg transition-shadow flex items-center justify-center"
                 >
                   {opt}
                 </motion.button>

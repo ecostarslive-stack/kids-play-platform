@@ -204,7 +204,7 @@ export default function SimonPage() {
         {phase === "showing" ? "👀 !תסתכלו" : "👆 !תורכם"}
       </motion.p>
 
-      <div className="grid grid-cols-2 gap-4 w-full max-w-[280px]">
+      <div className="grid grid-cols-2 gap-4 w-full max-w-[min(320px,80vw)]">
         {simonColors.map((sc) => (
           <motion.button
             key={sc.id}

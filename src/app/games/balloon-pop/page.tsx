@@ -171,7 +171,7 @@ export default function BalloonPopPage() {
         </p>
       </motion.div>
 
-      <div className="relative w-full h-[400px] bg-gradient-to-t from-game-green/20 to-info/10 rounded-3xl overflow-hidden">
+      <div className="relative w-full h-[50vh] min-h-[260px] max-h-[460px] bg-gradient-to-t from-game-green/20 to-info/10 rounded-3xl overflow-hidden">
         <AnimatePresence>
           {balloons.filter(b => !b.popped).map((balloon) => (
             <motion.button
