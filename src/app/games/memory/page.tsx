@@ -146,6 +146,7 @@ export default function MemoryPage() {
         total={totalPairs}
         onPlayAgain={startGame}
         onGoHome={() => router.push("/")}
+        slug="memory"
       />
     );
   }

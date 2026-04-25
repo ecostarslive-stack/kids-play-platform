@@ -450,15 +450,18 @@ function PlayerBadge({ player, isHebrew }: {
 }) {
   const completed = Object.keys(player.gameStars ?? {}).length;
   return (
-    <div className="flex items-center gap-2 bg-white/85 backdrop-blur rounded-2xl px-3 py-1.5 shadow-sm">
-      <span className="text-xl">⭐</span>
-      <div>
-        <p className="font-black text-sm leading-none">{player.name || (isHebrew ? "שחקן" : "Player")}</p>
-        <p className="text-xs text-foreground/50">
-          {player.totalStars}⭐ · 🔥{player.streakDays} · 🗺️{completed}
-        </p>
-      </div>
-    </div>
+    <Link href="/profile">
+      <motion.div whileTap={{ scale: 0.95 }}
+        className="flex items-center gap-2 bg-white/85 backdrop-blur rounded-2xl px-3 py-1.5 shadow-sm">
+        <span className="text-xl">👤</span>
+        <div>
+          <p className="font-black text-sm leading-none">{player.name || (isHebrew ? "שחקן" : "Player")}</p>
+          <p className="text-xs text-foreground/50">
+            {player.totalStars}⭐ · 🔥{player.streakDays} · 🗺️{completed}
+          </p>
+        </div>
+      </motion.div>
+    </Link>
   );
 }
 

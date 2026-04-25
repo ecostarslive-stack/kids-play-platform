@@ -215,6 +215,7 @@ export default function NumbersPage() {
         total={TOTAL_ROUNDS * 10}
         onPlayAgain={() => { setRoundIdx(0); setScore(0); setPhase("playing"); }}
         onGoHome={() => router.push("/")}
+        slug="numbers"
       />
     );
   }

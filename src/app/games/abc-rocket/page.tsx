@@ -149,6 +149,7 @@ export default function AbcRocketPage() {
         total={TOTAL_ROUNDS}
         onPlayAgain={() => { setScore(0); setPhase("playing"); startRound(0); }}
         onGoHome={() => router.push("/")}
+        slug="abc-rocket"
       />
     );
   }

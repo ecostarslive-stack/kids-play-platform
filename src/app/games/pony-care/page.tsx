@@ -349,6 +349,7 @@ export default function PonyCarePage() {
           setPhase("playing");
         }}
         onGoHome={() => router.push("/")}
+        slug="pony-care"
       />
     );
   }

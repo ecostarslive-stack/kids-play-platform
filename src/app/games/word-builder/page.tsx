@@ -146,6 +146,7 @@ export default function WordBuilderPage() {
         total={config.rounds}
         onPlayAgain={() => startGame(difficulty)}
         onGoHome={() => router.push("/")}
+        slug="word-builder"
       />
     );
   }

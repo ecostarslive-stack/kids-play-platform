@@ -165,6 +165,7 @@ export default function ColorSplashPage() {
         total={TOTAL_ROUNDS}
         onPlayAgain={() => { setScore(0); setPhase("playing"); nextRound(0); }}
         onGoHome={() => router.push("/")}
+        slug="color-splash"
       />
     );
   }

@@ -153,6 +153,7 @@ export default function CountBubblesPage() {
         total={TOTAL_ROUNDS}
         onPlayAgain={() => { setScore(0); setPhase("playing"); nextRound(0); }}
         onGoHome={() => router.push("/")}
+        slug="count-bubbles"
       />
     );
   }

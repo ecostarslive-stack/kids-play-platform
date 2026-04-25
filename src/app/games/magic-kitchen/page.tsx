@@ -210,6 +210,7 @@ export default function MagicKitchenPage() {
           setRecipeIdx(0); setAddedIds([]); setCooking(false); setDone(false); setScore(0); setPhase("playing");
         }}
         onGoHome={() => router.push("/")}
+        slug="magic-kitchen"
       />
     );
   }

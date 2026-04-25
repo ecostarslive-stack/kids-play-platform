@@ -193,6 +193,7 @@ export default function WordMatchPage() {
           startRound(0, usedIdsRef.current);
         }}
         onGoHome={() => router.push("/")}
+        slug="word-match"
       />
     );
   }

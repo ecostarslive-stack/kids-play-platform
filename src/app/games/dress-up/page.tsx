@@ -264,6 +264,7 @@ export default function DressUpPage() {
           setPhase("playing");
         }}
         onGoHome={() => router.push("/")}
+        slug="dress-up"
       />
     );
   }

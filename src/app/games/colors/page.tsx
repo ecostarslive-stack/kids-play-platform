@@ -142,6 +142,7 @@ export default function ColorsPage() {
           setPhase("playing");
         }}
         onGoHome={() => router.push("/")}
+        slug="colors"
       />
     );
   }

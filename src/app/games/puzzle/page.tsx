@@ -116,6 +116,7 @@ export default function PuzzlePage() {
         total={10}
         onPlayAgain={() => startGame(selectedPuzzle)}
         onGoHome={() => router.push("/")}
+        slug="puzzle"
       />
     );
   }

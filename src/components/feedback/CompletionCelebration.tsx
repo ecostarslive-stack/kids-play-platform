@@ -11,6 +11,7 @@ interface CompletionCelebrationProps {
   total: number;
   onPlayAgain: () => void;
   onGoHome: () => void;
+  slug?: string; // game slug — records best stars on the world map
 }
 
 const confettiEmojis = ["🎉", "⭐", "🌟", "🎊", "💫", "🏆", "🎈", "🦄"];
@@ -30,8 +31,9 @@ export function CompletionCelebration({
   total,
   onPlayAgain,
   onGoHome,
+  slug,
 }: CompletionCelebrationProps) {
-  const { addStars } = usePlayer();
+  const { addStars, recordGameComplete } = usePlayer();
   const awardedRef = useRef(false);
   const stars = calcStars(score, total);
 
@@ -40,6 +42,7 @@ export function CompletionCelebration({
     if (show && !awardedRef.current) {
       awardedRef.current = true;
       addStars(stars);
+      if (slug) recordGameComplete(slug, stars);
     }
     if (!show) {
       awardedRef.current = false;

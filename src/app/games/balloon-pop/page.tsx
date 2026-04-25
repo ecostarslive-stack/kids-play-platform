@@ -162,6 +162,7 @@ export default function BalloonPopPage() {
         total={config.rounds}
         onPlayAgain={() => { setRound(0); setScore(0); setPhase("playing"); }}
         onGoHome={() => router.push("/")}
+        slug="balloon-pop"
       />
     );
   }

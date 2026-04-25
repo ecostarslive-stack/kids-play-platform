@@ -163,6 +163,7 @@ export default function TapAnimalPage() {
         total={TOTAL_ROUNDS}
         onPlayAgain={() => { setScore(0); setCombo(0); setPhase("playing"); startRound(0); }}
         onGoHome={() => router.push("/")}
+        slug="tap-animal"
       />
     );
   }

@@ -168,6 +168,7 @@ export default function SimonPage() {
         total={config.maxRounds}
         onPlayAgain={() => startGame(difficulty)}
         onGoHome={() => router.push("/")}
+        slug="simon"
       />
     );
   }

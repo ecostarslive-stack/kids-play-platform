@@ -172,6 +172,7 @@ export default function TreasureHuntPage() {
         total={config.rounds}
         onPlayAgain={() => startGame(difficulty)}
         onGoHome={() => router.push("/")}
+        slug="treasure-hunt"
       />
     );
   }

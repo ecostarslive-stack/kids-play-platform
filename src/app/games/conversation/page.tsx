@@ -234,6 +234,7 @@ export default function ConversationPage() {
         total={TOTAL}
         onPlayAgain={startGame}
         onGoHome={() => router.push("/")}
+        slug="conversation"
       />
     );
   }

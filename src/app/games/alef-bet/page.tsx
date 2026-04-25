@@ -249,7 +249,8 @@ export default function AlefBetPage() {
     return (
       <CompletionCelebration show score={score} total={ROUNDS * 25}
         onPlayAgain={() => { setRoundIdx(0); setScore(0); setPhase("playing"); }}
-        onGoHome={() => router.push("/")} />
+        onGoHome={() => router.push("/")}
+        slug="alef-bet" />
     );
   }
 
