@@ -1,61 +1,66 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { GameCard } from "@/components/ui/GameCard";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { AvatarOnboarding } from "@/components/ui/AvatarOnboarding";
 import { useLanguage } from "@/providers/LanguageProvider";
 import { usePlayer } from "@/providers/PlayerProvider";
+import { DailyQuestPanel } from "@/components/ui/DailyQuestPanel";
 
-interface GameEntry {
+// ── Island / World Map Data ────────────────────────────────────────────────────
+interface Island {
   slug: string;
-  title: string;
-  subtitle: string;
+  label: string;
   emoji: string;
-  color: string;
+  color: string; // island bg
+  x: number; // % from left
+  y: number; // % from top
+  size: number; // relative size factor
+  stars?: number; // locked threshold
 }
 
+const ISLANDS: Island[] = [
+  { slug: "alef-bet",      label: "אותיות",   emoji: "🔤", color: "#a855f7", x: 50, y: 12, size: 1.3 },
+  { slug: "numbers",       label: "מספרים",   emoji: "🔢", color: "#ec4899", x: 22, y: 28, size: 1.1 },
+  { slug: "colors",        label: "צבעים",    emoji: "🎨", color: "#f97316", x: 75, y: 30, size: 1.0 },
+  { slug: "magic-kitchen", label: "מטבח",     emoji: "🍳", color: "#f59e0b", x: 15, y: 52, size: 1.0 },
+  { slug: "magic-garden",  label: "גן",       emoji: "🌻", color: "#22c55e", x: 55, y: 50, size: 1.1 },
+  { slug: "dress-up",      label: "לבוש",     emoji: "👗", color: "#d946ef", x: 85, y: 55, size: 0.95 },
+  { slug: "memory",        label: "זיכרון",   emoji: "🧠", color: "#3b82f6", x: 30, y: 70, size: 0.95 },
+  { slug: "treasure-hunt", label: "אוצר",     emoji: "🗺️", color: "#0ea5e9", x: 72, y: 72, size: 0.95 },
+  { slug: "word-builder",  label: "מילים",    emoji: "📝", color: "#10b981", x: 45, y: 84, size: 0.9 },
+  { slug: "shapes",        label: "צורות",    emoji: "🔷", color: "#eab308", x: 12, y: 82, size: 0.85 },
+  { slug: "balloon-pop",   label: "בלונים",   emoji: "🎈", color: "#f43f5e", x: 83, y: 84, size: 0.85 },
+  { slug: "simon",         label: "סיימון",   emoji: "🔔", color: "#8b5cf6", x: 60, y: 92, size: 0.8  },
+];
+
+// Background decoration clouds/fish
+const BG_DECO = [
+  { emoji: "☁️",  x: 5,  y: 8,  scale: 1.4 },
+  { emoji: "☁️",  x: 72, y: 5,  scale: 1.0 },
+  { emoji: "☁️",  x: 88, y: 18, scale: 0.8 },
+  { emoji: "🐟",  x: 2,  y: 42, scale: 0.9 },
+  { emoji: "🐠",  x: 92, y: 68, scale: 0.9 },
+  { emoji: "⛵",  x: 40, y: 95, scale: 1.0 },
+  { emoji: "🌊",  x: 0,  y: 97, scale: 1.5 },
+  { emoji: "🌊",  x: 50, y: 97, scale: 1.5 },
+  { emoji: "⭐",  x: 10, y: 18, scale: 0.7 },
+  { emoji: "⭐",  x: 95, y: 38, scale: 0.6 },
+];
+
+// Path connections between islands (drawn as SVG lines)
+const PATHS = [
+  [0, 1], [0, 2], [1, 3], [1, 4], [2, 4], [2, 5],
+  [3, 6], [4, 6], [4, 7], [5, 7], [6, 9], [6, 8], [7, 10], [8, 11],
+];
+
 export default function HomePage() {
-  const { t, isHebrew } = useLanguage();
+  const { isHebrew } = useLanguage();
   const { player, loaded, completeOnboarding } = usePlayer();
+  const [activeIsland, setActiveIsland] = useState<string | null>(null);
 
-  const learningGames: GameEntry[] = [
-    { slug: "alef-bet",      title: t.games.alefBet.title,      subtitle: t.games.alefBet.subtitle,      emoji: "🔤", color: "bg-game-purple" },
-    { slug: "numbers",       title: t.games.numbers.title,       subtitle: t.games.numbers.subtitle,       emoji: "🔢", color: "bg-game-pink" },
-    { slug: "colors",        title: t.games.colors.title,        subtitle: t.games.colors.subtitle,        emoji: "🎨", color: "bg-game-orange" },
-    { slug: "shapes",        title: t.games.shapes.title,        subtitle: t.games.shapes.subtitle,        emoji: "🔷", color: "bg-game-yellow" },
-    { slug: "word-builder",  title: t.games.wordBuilder.title,   subtitle: t.games.wordBuilder.subtitle,   emoji: "📝", color: "bg-game-green" },
-    { slug: "treasure-hunt", title: t.games.treasureHunt.title,  subtitle: t.games.treasureHunt.subtitle,  emoji: "🗺️", color: "bg-game-blue" },
-    { slug: "daily-word",    title: t.games.dailyWord.title,     subtitle: t.games.dailyWord.subtitle,     emoji: "📅", color: "bg-gradient-to-br from-teal-400 to-emerald-500" },
-    { slug: "conversation",  title: t.games.conversation.title,  subtitle: t.games.conversation.subtitle,  emoji: "💬", color: "bg-gradient-to-br from-violet-400 to-purple-500" },
-  ];
-
-  const funGames: GameEntry[] = [
-    { slug: "memory",      title: t.games.memory.title,     subtitle: t.games.memory.subtitle,     emoji: "🧠", color: "bg-game-green" },
-    { slug: "puzzle",      title: t.games.puzzle.title,     subtitle: t.games.puzzle.subtitle,     emoji: "🧩", color: "bg-game-blue" },
-    { slug: "balloon-pop", title: t.games.balloonPop.title, subtitle: t.games.balloonPop.subtitle, emoji: "🎈", color: "bg-game-pink" },
-    { slug: "simon",       title: t.games.simon.title,      subtitle: t.games.simon.subtitle,      emoji: "🔔", color: "bg-game-orange" },
-  ];
-
-  const newGames: GameEntry[] = [
-    { slug: "tap-animal",    title: t.games.tapAnimal.title,    subtitle: t.games.tapAnimal.subtitle,    emoji: "🐱", color: "bg-gradient-to-br from-green-400 to-emerald-500" },
-    { slug: "word-match",    title: t.games.wordMatch.title,    subtitle: t.games.wordMatch.subtitle,    emoji: "🃏", color: "bg-gradient-to-br from-violet-500 to-purple-600" },
-    { slug: "abc-rocket",    title: t.games.abcRocket.title,    subtitle: t.games.abcRocket.subtitle,    emoji: "🚀", color: "bg-gradient-to-br from-indigo-500 to-purple-600" },
-    { slug: "count-bubbles", title: t.games.countBubbles.title, subtitle: t.games.countBubbles.subtitle, emoji: "🫧", color: "bg-gradient-to-br from-blue-400 to-cyan-500" },
-    { slug: "color-splash",  title: t.games.colorSplash.title,  subtitle: t.games.colorSplash.subtitle,  emoji: "🎨", color: "bg-gradient-to-br from-orange-400 to-amber-500" },
-    { slug: "pony-care",      title: t.games.ponyCare.title,      subtitle: t.games.ponyCare.subtitle,      emoji: "🦄", color: "bg-gradient-to-br from-pink-400 to-rose-500" },
-    { slug: "magic-kitchen", title: t.games.magicKitchen.title, subtitle: t.games.magicKitchen.subtitle, emoji: "🍳", color: "bg-gradient-to-br from-orange-400 to-amber-500" },
-    { slug: "magic-garden",  title: t.games.magicGarden.title,  subtitle: t.games.magicGarden.subtitle,  emoji: "🌻", color: "bg-gradient-to-br from-green-400 to-emerald-500" },
-    { slug: "dress-up",      title: t.games.dressUp.title,      subtitle: t.games.dressUp.subtitle,      emoji: "👗", color: "bg-gradient-to-br from-pink-500 to-purple-500" },
-  ];
-
-  const storyGames: GameEntry[] = [
-    { slug: "ari-adventure", title: t.games.ariAdventure.title, subtitle: t.games.ariAdventure.subtitle, emoji: "🦁", color: "bg-gradient-to-br from-amber-400 to-orange-500" },
-    { slug: "noa-garden",    title: t.games.noaGarden.title,    subtitle: t.games.noaGarden.subtitle,    emoji: "🌸", color: "bg-gradient-to-br from-pink-400 to-rose-500" },
-  ];
-
-  // Don't flash anything until loaded from localStorage
   if (!loaded) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -70,185 +75,249 @@ export default function HomePage() {
     );
   }
 
-  // Show onboarding for first-time visitors
   if (!player.onboardingDone) {
     return <AvatarOnboarding onDone={completeOnboarding} />;
   }
 
   return (
-    <main className="flex-1 flex flex-col items-center px-4 pb-10 gap-6">
-      {/* Language toggle */}
-      <div className="w-full max-w-3xl flex justify-end pt-2">
+    <main className="flex-1 flex flex-col items-center pb-6 gap-0 overflow-x-hidden">
+      {/* Top bar */}
+      <div className="w-full max-w-3xl flex justify-between items-center px-4 pt-3 pb-1 z-10">
+        <PlayerBadge player={player} isHebrew={isHebrew} />
         <LanguageToggle />
       </div>
 
-      {/* Hero banner */}
-      <motion.section
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-3xl rounded-3xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6 text-white text-center shadow-xl relative overflow-hidden"
-      >
-        {/* Floating bg emojis */}
-        {["🌈","⭐","🎈","🌟","💫"].map((e, i) => (
-          <motion.span
-            key={i}
-            className="absolute text-2xl opacity-20 pointer-events-none"
-            style={{ left: `${10 + i * 18}%`, top: `${15 + (i % 2) * 50}%` }}
-            animate={{ y: [0, -12, 0], rotate: [0, 15, -15, 0] }}
-            transition={{ repeat: Infinity, duration: 3 + i * 0.5 }}
-          >
-            {e}
-          </motion.span>
-        ))}
-        <motion.div
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ repeat: Infinity, duration: 2.5 }}
-          className="text-5xl mb-3"
-        >
-          🎮
-        </motion.div>
-        <h1 className="text-3xl md:text-4xl font-black mb-1 drop-shadow">{t.home.title}</h1>
-        <p className="text-base opacity-90">{t.home.subtitle}</p>
-      </motion.section>
+      {/* Daily Quest strip */}
+      <div className="w-full max-w-3xl px-3 mb-1">
+        <DailyQuestPanel compact />
+      </div>
 
-      {/* Learn Hebrew & English CTA row */}
-      <section className="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Link href="/learn">
-          <GameCard
-            title={t.home.learnHebrew}
-            subtitle={t.home.learnHebrewSub}
-            emoji="🗣️"
-            color="bg-gradient-to-br from-indigo-500 to-blue-600"
-          />
-        </Link>
-        <Link href="/learn-english">
-          <GameCard
-            title={t.home.learnEnglish}
-            subtitle={t.home.learnEnglishSub}
-            emoji="🇺🇸"
-            color="bg-gradient-to-br from-red-500 to-pink-600"
-          />
-        </Link>
-      </section>
+      {/* World Map */}
+      <div className="w-full max-w-3xl px-2">
+        <WorldMap
+          islands={ISLANDS}
+          activeIsland={activeIsland}
+          setActiveIsland={setActiveIsland}
+          playerStars={player.totalStars}
+        />
+      </div>
 
-      {/* Daily Challenge CTA */}
-      <Link href="/daily-challenge" className="w-full max-w-3xl">
+      {/* Quick links row */}
+      <div className="w-full max-w-3xl px-3 mt-2 grid grid-cols-3 gap-2">
+        <QuickLink href="/learn"          emoji="🗣️" label={isHebrew ? "עברית" : "Hebrew"} color="#6366f1" />
+        <QuickLink href="/learn-english"  emoji="🇺🇸" label={isHebrew ? "אנגלית" : "English"} color="#ef4444" />
+        <QuickLink href="/daily-challenge" emoji="🎯" label={isHebrew ? "אתגר יומי" : "Daily"} color="#a855f7" />
+      </div>
+
+      {/* Achievements */}
+      <Link href="/achievements" className="w-full max-w-3xl px-3 mt-2">
         <motion.div
           whileTap={{ scale: 0.97 }}
-          className="w-full rounded-3xl p-4 flex items-center justify-between shadow-lg"
-          style={{ background: "linear-gradient(135deg, #6366f1, #a855f7, #ec4899)" }}
+          className="w-full bg-gradient-to-r from-yellow-400 to-orange-400 text-white font-black text-base py-3 rounded-2xl text-center shadow-md"
         >
-          <div>
-            <p className="text-white font-black text-xl">{t.home.dailyChallenge}</p>
-            <p className="text-white/70 text-sm">{isHebrew ? "משחק חדש כל יום!" : "New game every day!"}</p>
-          </div>
-          <motion.span
-            className="text-5xl"
-            animate={{ rotate: [0, -15, 15, 0], scale: [1, 1.15, 1] }}
-            transition={{ repeat: Infinity, duration: 3 }}
-          >🎯</motion.span>
+          {isHebrew ? "🏆 ההישגים שלי" : "🏆 My Achievements"}
         </motion.div>
       </Link>
-
-      {/* NEW games — featured prominently */}
-      <Section title={t.home.newGames}>
-        <div className="grid grid-cols-3 gap-3">
-          {newGames.map((g) => (
-            <GameLink key={g.slug} game={g} small />
-          ))}
-        </div>
-      </Section>
-
-      {/* Story Adventures */}
-      <Section title={t.home.adventures}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {storyGames.map((g) => (
-            <GameLink key={g.slug} game={g} />
-          ))}
-        </div>
-      </Section>
-
-      {/* Learning Games */}
-      <Section title={t.home.learningGames}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          {learningGames.map((g) => (
-            <GameLink key={g.slug} game={g} small />
-          ))}
-        </div>
-      </Section>
-
-      {/* Fun Games */}
-      <Section title={t.home.funGames}>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {funGames.map((g) => (
-            <GameLink key={g.slug} game={g} small />
-          ))}
-        </div>
-      </Section>
-
-      {/* Achievements link */}
-      <Link href="/achievements" className="w-full max-w-3xl">
-        <motion.div
-          whileTap={{ scale: 0.97 }}
-          className="w-full bg-gradient-to-r from-yellow-400 to-orange-400 text-white font-black text-lg py-4 rounded-2xl text-center shadow-md"
-        >
-          {t.home.myAchievements}
-        </motion.div>
-      </Link>
-
-      {/* Daily streak nudge */}
-      <DailyNudge isHebrew={isHebrew} />
     </main>
   );
 }
 
-/* ── helpers ── */
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+// ── World Map Component ────────────────────────────────────────────────────────
+function WorldMap({
+  islands,
+  activeIsland,
+  setActiveIsland,
+  playerStars,
+}: {
+  islands: Island[];
+  activeIsland: string | null;
+  setActiveIsland: (s: string | null) => void;
+  playerStars: number;
+}) {
   return (
-    <section className="w-full max-w-3xl">
-      <h2 className="text-xl font-black mb-3 text-center text-foreground">{title}</h2>
-      {children}
-    </section>
+    <div
+      className="relative w-full rounded-3xl overflow-hidden shadow-2xl"
+      style={{
+        background: "linear-gradient(180deg, #87CEEB 0%, #4FC3F7 30%, #1E88E5 60%, #1565C0 100%)",
+        aspectRatio: "3/4",
+        maxHeight: "70vh",
+      }}
+    >
+      {/* Background decorations */}
+      {BG_DECO.map((d, i) => (
+        <motion.span
+          key={i}
+          className="absolute text-2xl pointer-events-none select-none"
+          style={{ left: `${d.x}%`, top: `${d.y}%`, fontSize: `${d.scale * 22}px` }}
+          animate={{ y: [0, -6, 0], rotate: [0, 5, -5, 0] }}
+          transition={{ repeat: Infinity, duration: 4 + i * 0.7, ease: "easeInOut" }}
+        >
+          {d.emoji}
+        </motion.span>
+      ))}
+
+      {/* SVG path lines between islands */}
+      <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: "none" }}>
+        {PATHS.map(([a, b], i) => {
+          const ia = islands[a];
+          const ib = islands[b];
+          return (
+            <motion.path
+              key={i}
+              d={`M ${ia.x}% ${ia.y}% Q ${(ia.x + ib.x) / 2 + 8}% ${(ia.y + ib.y) / 2 - 8}% ${ib.x}% ${ib.y}%`}
+              stroke="rgba(255,255,255,0.35)"
+              strokeWidth="2"
+              strokeDasharray="6 5"
+              fill="none"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 1.5, delay: i * 0.1 }}
+            />
+          );
+        })}
+      </svg>
+
+      {/* Islands */}
+      {islands.map((island, i) => (
+        <IslandNode
+          key={island.slug}
+          island={island}
+          index={i}
+          isActive={activeIsland === island.slug}
+          onTap={() => setActiveIsland(activeIsland === island.slug ? null : island.slug)}
+        />
+      ))}
+
+      {/* Popup tooltip when island tapped */}
+      <AnimatePresence>
+        {activeIsland && (() => {
+          const isl = islands.find((i) => i.slug === activeIsland);
+          if (!isl) return null;
+          return (
+            <motion.div
+              key="tooltip"
+              initial={{ opacity: 0, scale: 0.7, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.7, y: 10 }}
+              className="absolute z-20"
+              style={{
+                left: `${Math.min(Math.max(isl.x - 12, 2), 60)}%`,
+                top: `${Math.max(isl.y - 22, 4)}%`,
+              }}
+            >
+              <Link href={`/games/${isl.slug}`}>
+                <div
+                  className="rounded-2xl px-4 py-2 shadow-xl flex items-center gap-2 border-2 border-white/60"
+                  style={{ background: isl.color }}
+                >
+                  <span className="text-2xl">{isl.emoji}</span>
+                  <span className="text-white font-black text-lg">{isl.label}</span>
+                  <span className="text-white text-xl">▶</span>
+                </div>
+              </Link>
+            </motion.div>
+          );
+        })()}
+      </AnimatePresence>
+
+      {/* Map title */}
+      <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10">
+        <motion.p
+          className="text-white font-black text-lg drop-shadow-lg"
+          animate={{ opacity: [0.8, 1, 0.8] }}
+          transition={{ repeat: Infinity, duration: 3 }}
+        >
+          🗺️ עולם המשחקים
+        </motion.p>
+      </div>
+    </div>
   );
 }
 
-function GameLink({ game, small }: { game: GameEntry; small?: boolean }) {
+function IslandNode({
+  island,
+  index,
+  isActive,
+  onTap,
+}: {
+  island: Island;
+  index: number;
+  isActive: boolean;
+  onTap: () => void;
+}) {
+  const size = island.size * 52; // base px size
+
   return (
-    <Link href={`/games/${game.slug}`}>
+    <motion.button
+      className="absolute flex flex-col items-center gap-0.5 cursor-pointer z-10"
+      style={{
+        left: `${island.x}%`,
+        top: `${island.y}%`,
+        transform: "translate(-50%, -50%)",
+        width: size,
+      }}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{
+        scale: isActive ? 1.18 : 1,
+        opacity: 1,
+        y: [0, -4, 0],
+      }}
+      transition={{
+        scale: { type: "spring", stiffness: 300 },
+        opacity: { delay: index * 0.07, duration: 0.4 },
+        y: { repeat: Infinity, duration: 2.5 + index * 0.2, ease: "easeInOut" },
+      }}
+      whileTap={{ scale: 0.88 }}
+      onClick={onTap}
+    >
+      {/* Island ground */}
+      <div
+        className="rounded-full shadow-lg flex items-center justify-center border-4 border-white/70"
+        style={{
+          background: `radial-gradient(circle at 35% 35%, ${island.color}dd, ${island.color}88)`,
+          width: size,
+          height: size * 0.7,
+          boxShadow: isActive ? `0 0 20px 6px ${island.color}88` : `0 4px 12px ${island.color}55`,
+        }}
+      >
+        <span style={{ fontSize: size * 0.45 }}>{island.emoji}</span>
+      </div>
+      {/* Label */}
+      <motion.span
+        className="text-white font-black text-center drop-shadow-md leading-tight"
+        style={{ fontSize: Math.max(10, size * 0.22) }}
+        animate={{ opacity: isActive ? 1 : 0.85 }}
+      >
+        {island.label}
+      </motion.span>
+    </motion.button>
+  );
+}
+
+// ── Helper sub-components ──────────────────────────────────────────────────────
+function PlayerBadge({ player, isHebrew }: { player: { name: string; totalStars: number; streakDays: number }; isHebrew: boolean }) {
+  return (
+    <div className="flex items-center gap-2 bg-white/80 backdrop-blur rounded-2xl px-3 py-1.5 shadow-sm">
+      <span className="text-xl">⭐</span>
+      <div>
+        <p className="font-black text-sm leading-none">{player.name || (isHebrew ? "שחקן" : "Player")}</p>
+        <p className="text-xs text-foreground/50">{player.totalStars} ⭐ · 🔥 {player.streakDays}</p>
+      </div>
+    </div>
+  );
+}
+
+function QuickLink({ href, emoji, label, color }: { href: string; emoji: string; label: string; color: string }) {
+  return (
+    <Link href={href}>
       <motion.div
         whileTap={{ scale: 0.93 }}
-        className={`${game.color} rounded-2xl shadow-md cursor-pointer text-white flex flex-col items-center justify-center gap-1 text-center
-          ${small ? "p-3 min-h-[110px]" : "p-5 min-h-[150px]"}`}
+        className="rounded-2xl py-2 px-1 flex flex-col items-center gap-1 shadow-md text-white"
+        style={{ background: `linear-gradient(135deg, ${color}ee, ${color}88)` }}
       >
-        <span className={small ? "text-3xl" : "text-5xl"}>{game.emoji}</span>
-        <span className={`font-black leading-tight ${small ? "text-sm" : "text-lg"}`}>{game.title}</span>
-        {!small && <span className="text-xs opacity-80">{game.subtitle}</span>}
+        <span className="text-2xl">{emoji}</span>
+        <span className="font-black text-xs text-center leading-tight">{label}</span>
       </motion.div>
     </Link>
-  );
-}
-
-function DailyNudge({ isHebrew }: { isHebrew: boolean }) {
-  const { player } = usePlayer();
-  if (player.streakDays < 1) return null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-3xl bg-gradient-to-r from-orange-400 to-yellow-400 rounded-2xl p-4 text-white text-center shadow-lg"
-    >
-      <p className="font-black text-lg">
-        {isHebrew
-          ? `🔥 ${player.streakDays} ימים ברצף! המשך כך!`
-          : `🔥 ${player.streakDays} day streak! Keep it up!`}
-      </p>
-      <p className="text-sm opacity-90 mt-1">
-        {isHebrew
-          ? `⭐ ${player.totalStars} כוכבים שנאספו`
-          : `⭐ ${player.totalStars} stars collected`}
-      </p>
-    </motion.div>
   );
 }
