@@ -21,6 +21,7 @@ export interface PlayerData {
   lastPlayDate: string | null; // ISO date string YYYY-MM-DD
   starsToday: number;
   onboardingDone: boolean;
+  gameStars: Record<string, number>; // slug -> best star count (1-3)
 }
 
 const DEFAULT_PLAYER: PlayerData = {
@@ -31,6 +32,7 @@ const DEFAULT_PLAYER: PlayerData = {
   lastPlayDate: null,
   starsToday: 0,
   onboardingDone: false,
+  gameStars: {},
 };
 
 const STORAGE_KEY = "kids-play-player";
@@ -137,7 +139,20 @@ export function usePlayerStore() {
     });
   }, []);
 
+  /** Record a game completion with 1-3 stars. Only keeps best score per game. */
+  const recordGameComplete = useCallback((slug: string, stars: number) => {
+    setPlayerState((prev) => {
+      const best = Math.max(prev.gameStars?.[slug] ?? 0, Math.min(3, Math.max(1, stars)));
+      const next: PlayerData = {
+        ...prev,
+        gameStars: { ...(prev.gameStars ?? {}), [slug]: best },
+      };
+      savePlayer(next);
+      return next;
+    });
+  }, []);
+
   const avatar = AVATARS.find((a) => a.id === player.avatarId) ?? AVATARS[0];
 
-  return { player, loaded, updatePlayer, completeOnboarding, addStars, avatar };
+  return { player, loaded, updatePlayer, completeOnboarding, addStars, recordGameComplete, avatar };
 }

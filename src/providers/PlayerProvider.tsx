@@ -13,6 +13,7 @@ interface PlayerContextType {
   updatePlayer: (updates: Partial<PlayerData>) => void;
   completeOnboarding: (name: string, avatarId: string) => void;
   addStars: (count: number) => void;
+  recordGameComplete: (slug: string, stars: number) => void;
   avatar: AvatarEntry;
 }
 

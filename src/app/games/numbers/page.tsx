@@ -35,7 +35,7 @@ const EMOJIS_BY_VALUE = ["🍎","⭐","🌸","🎈","🐟","🦋","🍌","🔵",
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface FallingItem {
   uid: number;
-  startX: number; // 5–85 viewport %
+  startX: number; // 5–85 percent of container
   delay: number;  // animation delay in seconds
   emoji: string;
 }
@@ -179,8 +179,8 @@ export default function NumbersPage() {
 
   return (
     <div
-      className="flex-1 flex flex-col w-full max-w-md mx-auto relative overflow-hidden"
-      style={{ background: "linear-gradient(180deg, #87CEEB 0%, #B8E4C9 60%, #7EC850 100%)" }}
+      className="flex-1 flex flex-col w-full max-w-md mx-auto relative"
+      style={{ background: "linear-gradient(180deg, #87CEEB 0%, #B8E4C9 60%, #7EC850 100%)", minHeight: "100dvh" }}
     >
       <ParticleBurst particles={particles} screenFlash={screenFlash} shake={shake} />
 
@@ -223,13 +223,13 @@ export default function NumbersPage() {
       </div>
 
       {/* Falling items area */}
-      <div className="flex-1 relative w-full" style={{ minHeight: 320 }}>
+      <div className="flex-1 relative w-full overflow-hidden" style={{ minHeight: 320 }}>
         <AnimatePresence>
           {fallingItems.map((item) => (
             <motion.button
               key={item.uid}
-              initial={{ y: -60, x: `${item.startX}vw`, opacity: 1 }}
-              animate={{ y: "100vh", opacity: 1 }}
+              initial={{ y: -80, opacity: 1 }}
+              animate={{ y: 900, opacity: 1 }}
               exit={{ scale: 0, opacity: 0 }}
               transition={{ duration: FALL_DURATION_MS / 1000, ease: "linear", delay: item.delay }}
               onAnimationComplete={() => handleFallComplete(item.uid)}
@@ -239,8 +239,10 @@ export default function NumbersPage() {
               }}
               className="absolute text-5xl select-none cursor-pointer"
               style={{
+                left: `${item.startX}%`,
                 filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.25))",
                 WebkitTapHighlightColor: "transparent",
+                touchAction: "manipulation",
               }}
               whileTap={{ scale: 1.4 }}
             >
