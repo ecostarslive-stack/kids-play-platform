@@ -1,25 +1,20 @@
 /**
  * TTS Engine Abstraction
  *
- * Supports two providers:
+ * Supports three providers:
  *   "browser" — Web Speech API (free, built-in, Hebrew quality varies)
  *   "azure"   — Azure Neural TTS he-IL Hila / en-US Jenny (requires API key)
+ *   "google"  — Google Cloud TTS he-IL Wavenet (requires API key, 1M chars/month free)
  *
- * Switch provider via env var NEXT_PUBLIC_TTS_PROVIDER=azure
- * Azure also needs NEXT_PUBLIC_TTS_PROVIDER=azure and a /api/tts route server-side.
- *
- * The API contract is simple:
- *   speakText(text, lang, options?) → Promise<void>
+ * Switch provider via env var NEXT_PUBLIC_TTS_PROVIDER=google|azure|browser
  */
 
 export type TTSLang = "he-IL" | "en-US";
 
 export interface TTSOptions {
-  rate?: number;   // 0.5–2.0, default 0.9
-  pitch?: number;  // 0.5–2.0, default 1.1
+  rate?: number;
+  pitch?: number;
 }
-
-// ── Browser TTS ──────────────────────────────────────────────────────────────
 
 function browserSpeak(text: string, lang: TTSLang, opts: TTSOptions = {}): Promise<void> {
   return new Promise((resolve) => {
@@ -40,78 +35,66 @@ function browserCancel() {
   }
 }
 
-// ── Azure TTS (via /api/tts proxy) ───────────────────────────────────────────
-
 const azureVoices: Record<TTSLang, string> = {
-  "he-IL": "he-IL-HilaNeural",   // Natural Israeli Hebrew, female
-  "en-US": "en-US-JennyNeural",  // Natural US English, warm & child-friendly
+  "he-IL": "he-IL-HilaNeural",
+  "en-US": "en-US-JennyNeural",
 };
 
-let azureAudio: HTMLAudioElement | null = null;
+const googleVoices: Record<TTSLang, string> = {
+  "he-IL": "he-IL-Wavenet-A",
+  "en-US": "en-US-Wavenet-F",
+};
 
-async function azureSpeak(text: string, lang: TTSLang, opts: TTSOptions = {}): Promise<void> {
+let sharedAudio: HTMLAudioElement | null = null;
+
+function playAudioBlob(blob: Blob, text: string, lang: TTSLang, opts: TTSOptions): Promise<void> {
+  const url = URL.createObjectURL(blob);
+  return new Promise((resolve) => {
+    if (sharedAudio) { sharedAudio.pause(); sharedAudio.src = ""; }
+    sharedAudio = new Audio(url);
+    sharedAudio.playbackRate = opts.rate ?? 0.9;
+    sharedAudio.onended = () => { URL.revokeObjectURL(url); resolve(); };
+    sharedAudio.onerror = () => { URL.revokeObjectURL(url); browserSpeak(text, lang, opts).then(resolve); };
+    sharedAudio.play().catch(() => browserSpeak(text, lang, opts).then(resolve));
+  });
+}
+
+async function cloudSpeak(provider: "azure" | "google", text: string, lang: TTSLang, opts: TTSOptions = {}): Promise<void> {
   try {
+    const voice = provider === "google" ? googleVoices[lang] : azureVoices[lang];
     const response = await fetch("/api/tts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        text,
-        lang,
-        voice: azureVoices[lang],
-        rate: opts.rate ?? 0.9,
-        pitch: opts.pitch ?? 1.1,
-      }),
+      body: JSON.stringify({ provider, text, lang, voice, rate: opts.rate ?? 0.9, pitch: opts.pitch ?? 1.1 }),
     });
-
-    if (!response.ok) {
-      // Fallback to browser TTS if Azure fails
-      return browserSpeak(text, lang, opts);
-    }
-
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-
-    return new Promise((resolve) => {
-      if (azureAudio) {
-        azureAudio.pause();
-        azureAudio.src = "";
-      }
-      azureAudio = new Audio(url);
-      azureAudio.playbackRate = opts.rate ?? 0.9;
-      azureAudio.onended = () => { URL.revokeObjectURL(url); resolve(); };
-      azureAudio.onerror = () => { URL.revokeObjectURL(url); browserSpeak(text, lang, opts).then(resolve); };
-      azureAudio.play().catch(() => browserSpeak(text, lang, opts).then(resolve));
-    });
+    if (!response.ok) return browserSpeak(text, lang, opts);
+    return playAudioBlob(await response.blob(), text, lang, opts);
   } catch {
-    // Always fallback to browser on any error
     return browserSpeak(text, lang, opts);
   }
 }
 
-function azureCancel() {
-  if (azureAudio) {
-    azureAudio.pause();
-    azureAudio.src = "";
-    azureAudio = null;
-  }
+function cloudCancel() {
+  if (sharedAudio) { sharedAudio.pause(); sharedAudio.src = ""; sharedAudio = null; }
 }
 
-// ── Public API ────────────────────────────────────────────────────────────────
-
-function getProvider(): "azure" | "browser" {
-  if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_TTS_PROVIDER === "azure") {
-    return "azure";
+function getProvider(): "azure" | "google" | "browser" {
+  if (typeof process !== "undefined") {
+    const p = process.env.NEXT_PUBLIC_TTS_PROVIDER;
+    if (p === "azure") return "azure";
+    if (p === "google") return "google";
   }
   return "browser";
 }
 
 export function speakText(text: string, lang: TTSLang, opts?: TTSOptions): Promise<void> {
   const provider = getProvider();
-  if (provider === "azure") return azureSpeak(text, lang, opts);
+  if (provider === "azure") return cloudSpeak("azure", text, lang, opts ?? {});
+  if (provider === "google") return cloudSpeak("google", text, lang, opts ?? {});
   return browserSpeak(text, lang, opts);
 }
 
 export function cancelSpeech(): void {
   browserCancel();
-  azureCancel();
+  cloudCancel();
 }
