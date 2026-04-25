@@ -47,6 +47,7 @@ const ALL_GAMES: GameDef[] = [
 // Map canvas size (px) — bigger than screen so you can scroll/pan
 const MAP_W = 1400;
 const MAP_H = 2000;
+const MAP_SCALE = 0.55; // zoom-out factor applied via CSS transform
 
 // Island positions on the large canvas (px)
 interface Island {
@@ -218,19 +219,33 @@ function PanMap({
         </motion.div>
       </div>
 
-      {/* Scrollable canvas */}
+      {/* Scrollable canvas — outer sees scaled dims, inner canvas is full-size scaled down */}
       <div
         ref={scrollRef}
         className="w-full h-full overflow-auto"
         style={{ scrollbarWidth: "none" }}
         onClick={handleBgClick}
       >
-        {/* Map canvas */}
+        {/* Wrapper sized to scaled dims so scroll works correctly */}
+        <div
+          style={{
+            width: MAP_W * MAP_SCALE,
+            height: MAP_H * MAP_SCALE,
+            overflow: "hidden",
+            position: "relative",
+          }}
+        >
+        {/* Map canvas — full size, scaled down via transform */}
         <div
           className="relative"
           style={{
             width: MAP_W,
             height: MAP_H,
+            transform: `scale(${MAP_SCALE})`,
+            transformOrigin: "top left",
+            position: "absolute",
+            top: 0,
+            left: 0,
             background: "linear-gradient(180deg, #1a6b9e 0%, #1565c0 20%, #1976d2 40%, #0d47a1 70%, #01579b 100%)",
           }}
         >
@@ -416,6 +431,7 @@ function PanMap({
             })()}
           </AnimatePresence>
         </div>
+        </div> {/* end scaled wrapper */}
       </div>
 
       {/* Scroll shadow overlays for visual cue */}
